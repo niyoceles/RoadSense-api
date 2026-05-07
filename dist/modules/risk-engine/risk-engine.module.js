@@ -9,12 +9,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RiskEngineModule = void 0;
 const common_1 = require("@nestjs/common");
 const risk_engine_service_1 = require("./risk-engine.service");
+const traffic_controller_1 = require("./traffic.controller");
 const traffic_engine_service_1 = require("./traffic-engine.service");
 let RiskEngineModule = class RiskEngineModule {
 };
 exports.RiskEngineModule = RiskEngineModule;
 exports.RiskEngineModule = RiskEngineModule = __decorate([
     (0, common_1.Module)({
+        controllers: [traffic_controller_1.TrafficController],
         providers: [risk_engine_service_1.RiskEngineService, traffic_engine_service_1.TrafficEngineService],
         exports: [risk_engine_service_1.RiskEngineService, traffic_engine_service_1.TrafficEngineService],
     })

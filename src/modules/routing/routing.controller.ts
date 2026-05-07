@@ -22,4 +22,13 @@ export class RoutingController {
       request.waypoints
     );
   }
+
+  @Post('speed-limit')
+  async getSpeedLimit(@Body() location: { lat: number; lng: number }) {
+    const limit = await this.routingService.getSpeedLimit(
+      location.lat,
+      location.lng,
+    );
+    return { speedLimit: limit };
+  }
 }

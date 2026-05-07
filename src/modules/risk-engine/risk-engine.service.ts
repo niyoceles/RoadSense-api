@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 export enum VehicleType {
-  SEDAN = 'sedan',
-  SUV = 'suv',
-  MOTO = 'moto',
-  TRUCK = 'truck',
+  CAR = 'CAR',
+  WALKING = 'WALKING',
+  TRANSIT = 'TRANSIT',
+  CYCLING = 'CYCLING',
+  MOTO = 'MOTO',
 }
 
 export enum ReportSeverity {
@@ -35,10 +36,11 @@ export class RiskEngineService {
 
     // Vehicle specific modifiers
     const modifiers: Record<VehicleType, number> = {
-      [VehicleType.SEDAN]: 1.2, // Higher risk for low ground clearance
-      [VehicleType.SUV]: 0.8,   // Lower risk for robust suspension
-      [VehicleType.MOTO]: 1.5,  // Very high risk (potholes are dangerous for bikes)
-      [VehicleType.TRUCK]: 1.0, // Standard risk
+      [VehicleType.CAR]: 1.0,
+      [VehicleType.WALKING]: 0.5,
+      [VehicleType.TRANSIT]: 0.8,
+      [VehicleType.CYCLING]: 1.2,
+      [VehicleType.MOTO]: 1.5,
     };
 
     const riskScore = baseRisk * (modifiers[vehicleType] || 1.0);

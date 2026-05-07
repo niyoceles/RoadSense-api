@@ -19,32 +19,52 @@ export declare class RoutingController {
     private readonly routingService;
     constructor(routingService: RoutingService);
     calculateRoute(request: RouteRequestDto): Promise<{
-        primaryRoute: {
-            estimatedTimeSeconds: number;
-            safetyRiskScore: number;
-            totalCost: number;
-            riskLevel: "safe" | "caution" | "danger";
-            id: string;
+        id: string;
+        distanceMeters: number;
+        estimatedTimeSeconds: number;
+        polyline: string;
+        routeCoordinates: import("./routing.service").Coordinates[];
+        maneuvers: {
+            instruction: string;
+            verbalInstruction: string;
+            maneuver: string;
             distanceMeters: number;
-            baseTimeSeconds: number;
-            segments: {
-                id: string;
-                baseTime: number;
-            }[];
-        };
-        alternatives: {
-            estimatedTimeSeconds: number;
-            safetyRiskScore: number;
-            totalCost: number;
-            riskLevel: "safe" | "caution" | "danger";
-            id: string;
-            distanceMeters: number;
-            baseTimeSeconds: number;
-            segments: {
-                id: string;
-                baseTime: number;
-            }[];
+            durationSeconds: number;
+            beginShapeIndex: number;
+            endShapeIndex: number;
+            startLocation: import("./routing.service").Coordinates;
+            endLocation: import("./routing.service").Coordinates;
+            streetNames: any[];
         }[];
+        safetyRiskScore: number;
+        riskLevel: string;
+        alternatives: {
+            id: string;
+            label: string;
+            distanceMeters: number;
+            estimatedTimeSeconds: number;
+            routeCoordinates: import("./routing.service").Coordinates[];
+            maneuvers: any[];
+            safetyRiskScore: number;
+            riskLevel: string;
+        }[];
+    } | {
+        id: string;
+        distanceMeters: number;
+        estimatedTimeSeconds: any;
+        polyline: string;
+        routeCoordinates: import("./routing.service").Coordinates[];
+        maneuvers: any[];
+        safetyRiskScore: number;
+        riskLevel: "safe" | "caution" | "danger";
+        summary: any;
+        alternatives: any[];
+    }>;
+    getSpeedLimit(location: {
+        lat: number;
+        lng: number;
+    }): Promise<{
+        speedLimit: number;
     }>;
 }
 export {};

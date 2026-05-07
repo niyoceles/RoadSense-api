@@ -1,4 +1,10 @@
-import { IsEnum, IsNumber, IsOptional, IsString, IsNotEmpty } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsNotEmpty,
+} from 'class-validator';
 
 export enum ReportType {
   TRAFFIC = 'traffic',
@@ -44,4 +50,24 @@ export class CreateReportDto {
   @IsString()
   @IsOptional()
   imageUrl?: string;
+
+  @IsNumber()
+  @IsOptional()
+  speedLimit?: number;
+
+  @IsNumber()
+  @IsOptional()
+  directionDegrees?: number;
+
+  @IsString()
+  @IsOptional()
+  roadSegmentId?: string;
+
+  @IsString()
+  @IsOptional()
+  cameraType?: 'fixed' | 'mobile' | 'red_light';
+
+  @IsString()
+  @IsOptional()
+  reportedBy?: string;
 }

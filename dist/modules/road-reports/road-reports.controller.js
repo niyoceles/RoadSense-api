@@ -24,8 +24,20 @@ let RoadReportsController = class RoadReportsController {
     async create(createReportDto) {
         return this.reportsService.create(createReportDto);
     }
+    async findAll() {
+        return this.reportsService.findAll();
+    }
     async findNearby(lat, lng, radius) {
         return this.reportsService.findNearby(lat, lng, radius);
+    }
+    async verify(id) {
+        return this.reportsService.verify(id);
+    }
+    async dismiss(id) {
+        return this.reportsService.dismiss(id);
+    }
+    async delete(id) {
+        return this.reportsService.delete(id);
     }
 };
 exports.RoadReportsController = RoadReportsController;
@@ -37,6 +49,13 @@ __decorate([
     __metadata("design:paramtypes", [create_report_dto_1.CreateReportDto]),
     __metadata("design:returntype", Promise)
 ], RoadReportsController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all road reports' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], RoadReportsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('nearby'),
     (0, swagger_1.ApiOperation)({ summary: 'Get reports within a radius' }),
@@ -50,6 +69,30 @@ __decorate([
     __metadata("design:paramtypes", [Number, Number, Number]),
     __metadata("design:returntype", Promise)
 ], RoadReportsController.prototype, "findNearby", null);
+__decorate([
+    (0, common_1.Patch)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Verify a road report' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], RoadReportsController.prototype, "verify", null);
+__decorate([
+    (0, common_1.Patch)(':id/dismiss'),
+    (0, swagger_1.ApiOperation)({ summary: 'Mark a road report as not currently present' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], RoadReportsController.prototype, "dismiss", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete a road report' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], RoadReportsController.prototype, "delete", null);
 exports.RoadReportsController = RoadReportsController = __decorate([
     (0, swagger_1.ApiTags)('reports'),
     (0, common_1.Controller)('reports'),

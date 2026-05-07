@@ -23,4 +23,9 @@ export declare class CreateReportDto {
     latitude: number;
     longitude: number;
     imageUrl?: string;
+    speedLimit?: number;
+    directionDegrees?: number;
+    roadSegmentId?: string;
+    cameraType?: 'fixed' | 'mobile' | 'red_light';
+    reportedBy?: string;
 }

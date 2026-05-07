@@ -24,6 +24,10 @@ let RoutingController = class RoutingController {
     async calculateRoute(request) {
         return this.routingService.calculateOptimalRoute(request.origin, request.destination, request.vehicleType, request.waypoints);
     }
+    async getSpeedLimit(location) {
+        const limit = await this.routingService.getSpeedLimit(location.lat, location.lng);
+        return { speedLimit: limit };
+    }
 };
 exports.RoutingController = RoutingController;
 __decorate([
@@ -33,6 +37,13 @@ __decorate([
     __metadata("design:paramtypes", [RouteRequestDto]),
     __metadata("design:returntype", Promise)
 ], RoutingController.prototype, "calculateRoute", null);
+__decorate([
+    (0, common_1.Post)('speed-limit'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], RoutingController.prototype, "getSpeedLimit", null);
 exports.RoutingController = RoutingController = __decorate([
     (0, common_1.Controller)('routing'),
     __metadata("design:paramtypes", [routing_service_1.RoutingService])

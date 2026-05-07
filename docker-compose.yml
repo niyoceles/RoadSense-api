@@ -1,0 +1,90 @@
+
+
+include:
+  - path: ../appwrite/docker-compose.yml
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    command: ["serve"]
+
+  roadsense-db:
+    image: postgis/postgis:15-3.3-alpine
+    container_name: roadsense-db
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASS:-password}
+      POSTGRES_DB: ${DB_NAME:-roadsense}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  roadsense-backend:
+    build:
+      context: .
+      target: development
+    container_name: roadsense-backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      DB_HOST: roadsense-db
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASS: ${DB_PASS:-password}
+      DB_NAME: ${DB_NAME:-roadsense}
+      JWT_SECRET: ${JWT_SECRET:-super_secret_key}
+      VALHALLA_URL: http://valhalla:8002
+      NOMINATIM_URL: http://nominatim:8080
+    depends_on:
+      roadsense-db:
+        condition: service_healthy
+
+  valhalla:
+    image: ghcr.io/gis-ops/docker-valhalla/valhalla:latest
+    container_name: valhalla
+    ports:
+      - "8002:8002"
+    volumes:
+      - ../valhalla_data:/custom_files
+    environment:
+      - tile_urls=https://download.geofabrik.de/africa/rwanda-latest.osm.pbf
+      - build_elevation=false
+      - build_admins=true
+      - build_time_zones=true
+
+  nominatim:
+    image: mediagis/nominatim:4.4
+    container_name: nominatim
+    ports:
+      - "8080:8080"
+    environment:
+      - PBF_URL=https://download.geofabrik.de/africa/rwanda-latest.osm.pbf
+    volumes:
+      - nominatim_data:/var/lib/postgresql/data
+
+  martin:
+    image: ghcr.io/maplibre/martin
+    container_name: martin
+    ports:
+      - "3001:3000"
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER:-postgres}:${DB_PASS:-password}@roadsense-db:5432/${DB_NAME:-roadsense}
+    depends_on:
+      roadsense-db:
+        condition: service_healthy
+    restart: on-failure
+
+volumes:
+  postgres_data:
+  nominatim_data:

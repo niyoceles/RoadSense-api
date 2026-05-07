@@ -19,8 +19,8 @@ let CamerasController = class CamerasController {
     constructor(camerasService) {
         this.camerasService = camerasService;
     }
-    async getNearbyCameras(lat, lng, radius) {
-        return this.camerasService.getCamerasAlongRoute(null);
+    async getNearbyCameras(lat, lng, radius = 5000) {
+        return this.camerasService.getNearbyCameras(Number(lat), Number(lng), Number(radius));
     }
 };
 exports.CamerasController = CamerasController;
@@ -30,7 +30,7 @@ __decorate([
     __param(1, (0, common_1.Query)('lng')),
     __param(2, (0, common_1.Query)('radius')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number, Number]),
+    __metadata("design:paramtypes", [Number, Number, Object]),
     __metadata("design:returntype", Promise)
 ], CamerasController.prototype, "getNearbyCameras", null);
 exports.CamerasController = CamerasController = __decorate([

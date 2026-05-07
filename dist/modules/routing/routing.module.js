@@ -8,6 +8,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RoutingModule = void 0;
 const common_1 = require("@nestjs/common");
+const axios_1 = require("@nestjs/axios");
+const config_1 = require("@nestjs/config");
 const routing_controller_1 = require("./routing.controller");
 const routing_service_1 = require("./routing.service");
 const risk_engine_module_1 = require("../risk-engine/risk-engine.module");
@@ -16,7 +18,7 @@ let RoutingModule = class RoutingModule {
 exports.RoutingModule = RoutingModule;
 exports.RoutingModule = RoutingModule = __decorate([
     (0, common_1.Module)({
-        imports: [risk_engine_module_1.RiskEngineModule],
+        imports: [axios_1.HttpModule, config_1.ConfigModule, risk_engine_module_1.RiskEngineModule],
         controllers: [routing_controller_1.RoutingController],
         providers: [routing_service_1.RoutingService],
         exports: [routing_service_1.RoutingService],

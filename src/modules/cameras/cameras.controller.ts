@@ -9,10 +9,12 @@ export class CamerasController {
   async getNearbyCameras(
     @Query('lat') lat: number,
     @Query('lng') lng: number,
-    @Query('radius') radius: number,
+    @Query('radius') radius = 5000,
   ) {
-    // In production, we would use lat/lng/radius to do a PostGIS ST_DWithin query.
-    // For now, we return the mock database from the service.
-    return this.camerasService.getCamerasAlongRoute(null);
+    return this.camerasService.getNearbyCameras(
+      Number(lat),
+      Number(lng),
+      Number(radius),
+    );
   }
 }

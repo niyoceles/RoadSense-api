@@ -10,11 +10,13 @@ exports.CamerasModule = void 0;
 const common_1 = require("@nestjs/common");
 const cameras_service_1 = require("./cameras.service");
 const cameras_controller_1 = require("./cameras.controller");
+const road_reports_module_1 = require("../road-reports/road-reports.module");
 let CamerasModule = class CamerasModule {
 };
 exports.CamerasModule = CamerasModule;
 exports.CamerasModule = CamerasModule = __decorate([
     (0, common_1.Module)({
+        imports: [road_reports_module_1.RoadReportsModule],
         controllers: [cameras_controller_1.CamerasController],
         providers: [cameras_service_1.CamerasService],
         exports: [cameras_service_1.CamerasService],

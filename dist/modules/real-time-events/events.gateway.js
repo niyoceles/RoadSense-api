@@ -12,7 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RealTimeEventGateway = void 0;
 const websockets_1 = require("@nestjs/websockets");
 const socket_io_1 = require("socket.io");
+const traffic_engine_service_1 = require("../risk-engine/traffic-engine.service");
 let RealTimeEventGateway = class RealTimeEventGateway {
+    constructor(trafficEngine) {
+        this.trafficEngine = trafficEngine;
+    }
     handleConnection(client) {
         console.log(`Client connected: ${client.id}`);
     }
@@ -27,10 +31,18 @@ let RealTimeEventGateway = class RealTimeEventGateway {
             timestamp: new Date(),
         });
     }
-    handleTrafficUpdate(client, payload) {
+    async handleTrafficUpdate(client, payload) {
+        const segment = await this.trafficEngine.recordTrafficUpdate({
+            lat: payload.lat,
+            lng: payload.lng,
+            speedKmh: payload.speedKmh ?? payload.speed,
+            heading: payload.heading,
+            speedLimit: payload.speedLimit,
+        });
         this.server.emit('traffic_flow', {
-            segmentId: payload.segmentId,
-            avgSpeed: payload.speed,
+            segmentId: segment.segmentId,
+            avgSpeed: segment.avgSpeedKmh,
+            trafficLevel: segment.trafficLevel,
         });
     }
 };
@@ -49,12 +61,13 @@ __decorate([
     (0, websockets_1.SubscribeMessage)('traffic_update'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], RealTimeEventGateway.prototype, "handleTrafficUpdate", null);
 exports.RealTimeEventGateway = RealTimeEventGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: { origin: '*' },
         namespace: 'events',
-    })
+    }),
+    __metadata("design:paramtypes", [traffic_engine_service_1.TrafficEngineService])
 ], RealTimeEventGateway);
 //# sourceMappingURL=events.gateway.js.map

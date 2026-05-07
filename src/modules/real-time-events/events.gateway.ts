@@ -6,6 +6,7 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { TrafficEngineService } from '../risk-engine/traffic-engine.service';
 
 @WebSocketGateway({
   cors: { origin: '*' },
@@ -14,6 +15,8 @@ import { Server, Socket } from 'socket.io';
 export class RealTimeEventGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
+
+  constructor(private readonly trafficEngine: TrafficEngineService) {}
 
   handleConnection(client: Socket) {
     console.log(`Client connected: ${client.id}`);
@@ -37,11 +40,19 @@ export class RealTimeEventGateway implements OnGatewayConnection, OnGatewayDisco
 
   // Real-time traffic speed updates from users
   @SubscribeMessage('traffic_update')
-  handleTrafficUpdate(client: Socket, payload: any) {
-    // Update road segment speed in Redis/DB
+  async handleTrafficUpdate(client: Socket, payload: any) {
+    const segment = await this.trafficEngine.recordTrafficUpdate({
+      lat: payload.lat,
+      lng: payload.lng,
+      speedKmh: payload.speedKmh ?? payload.speed,
+      heading: payload.heading,
+      speedLimit: payload.speedLimit,
+    });
+
     this.server.emit('traffic_flow', {
-      segmentId: payload.segmentId,
-      avgSpeed: payload.speed,
+      segmentId: segment.segmentId,
+      avgSpeed: segment.avgSpeedKmh,
+      trafficLevel: segment.trafficLevel,
     });
   }
 }

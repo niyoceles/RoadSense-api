@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RealTimeEventsModule = void 0;
 const common_1 = require("@nestjs/common");
+const risk_engine_module_1 = require("../risk-engine/risk-engine.module");
 const events_gateway_1 = require("./events.gateway");
 let RealTimeEventsModule = class RealTimeEventsModule {
 };
@@ -15,6 +16,7 @@ exports.RealTimeEventsModule = RealTimeEventsModule;
 exports.RealTimeEventsModule = RealTimeEventsModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
+        imports: [risk_engine_module_1.RiskEngineModule],
         providers: [events_gateway_1.RealTimeEventGateway],
         exports: [events_gateway_1.RealTimeEventGateway],
     })

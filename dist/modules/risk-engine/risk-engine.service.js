@@ -10,10 +10,11 @@ exports.RiskEngineService = exports.ReportSeverity = exports.VehicleType = void 
 const common_1 = require("@nestjs/common");
 var VehicleType;
 (function (VehicleType) {
-    VehicleType["SEDAN"] = "sedan";
-    VehicleType["SUV"] = "suv";
-    VehicleType["MOTO"] = "moto";
-    VehicleType["TRUCK"] = "truck";
+    VehicleType["CAR"] = "CAR";
+    VehicleType["WALKING"] = "WALKING";
+    VehicleType["TRANSIT"] = "TRANSIT";
+    VehicleType["CYCLING"] = "CYCLING";
+    VehicleType["MOTO"] = "MOTO";
 })(VehicleType || (exports.VehicleType = VehicleType = {}));
 var ReportSeverity;
 (function (ReportSeverity) {
@@ -27,10 +28,11 @@ let RiskEngineService = class RiskEngineService {
         const severityRisk = maxSeverity / 4.0;
         let baseRisk = (severityRisk * 0.6) + (potholeDensity * 0.4);
         const modifiers = {
-            [VehicleType.SEDAN]: 1.2,
-            [VehicleType.SUV]: 0.8,
+            [VehicleType.CAR]: 1.0,
+            [VehicleType.WALKING]: 0.5,
+            [VehicleType.TRANSIT]: 0.8,
+            [VehicleType.CYCLING]: 1.2,
             [VehicleType.MOTO]: 1.5,
-            [VehicleType.TRUCK]: 1.0,
         };
         const riskScore = baseRisk * (modifiers[vehicleType] || 1.0);
         return Math.min(Math.max(riskScore, 0), 1);

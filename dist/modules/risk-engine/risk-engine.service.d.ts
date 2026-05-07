@@ -1,8 +1,9 @@
 export declare enum VehicleType {
-    SEDAN = "sedan",
-    SUV = "suv",
-    MOTO = "moto",
-    TRUCK = "truck"
+    CAR = "CAR",
+    WALKING = "WALKING",
+    TRANSIT = "TRANSIT",
+    CYCLING = "CYCLING",
+    MOTO = "MOTO"
 }
 export declare enum ReportSeverity {
     LOW = 1,
