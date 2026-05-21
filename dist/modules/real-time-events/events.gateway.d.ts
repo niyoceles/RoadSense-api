@@ -7,6 +7,18 @@ export declare class RealTimeEventGateway implements OnGatewayConnection, OnGate
     constructor(trafficEngine: TrafficEngineService);
     handleConnection(client: Socket): void;
     handleDisconnect(client: Socket): void;
+    handleNearbySubscription(client: Socket, payload: any): {
+        subscribed: boolean;
+    };
+    handleRouteSubscription(client: Socket, payload: any): {
+        subscribed: boolean;
+    };
     handleHazardReport(client: Socket, payload: any): void;
     handleTrafficUpdate(client: Socket, payload: any): Promise<void>;
+    broadcastIncidentCreated(report: any): void;
+    broadcastIncidentUpdated(report: any): void;
+    broadcastIncidentExpired(report: any): void;
+    broadcastTrafficSegmentUpdate(segment: any): void;
+    private reportRoom;
+    private areaRoom;
 }

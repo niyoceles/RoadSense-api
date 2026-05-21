@@ -25,8 +25,8 @@ export class RoadReportsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all road reports' })
-  async findAll() {
-    return this.reportsService.findAll();
+  async findAll(@Query('includeInactive') includeInactive?: string) {
+    return this.reportsService.findAll(includeInactive === 'true');
   }
 
   @Get('nearby')
@@ -38,11 +38,34 @@ export class RoadReportsController {
     @Query('lat') lat: number,
     @Query('lng') lng: number,
     @Query('radius') radius: number,
+    @Query('limit') limit?: number,
   ) {
-    return this.reportsService.findNearby(lat, lng, radius);
+    return this.reportsService.findNearby(Number(lat), Number(lng), Number(radius), Number(limit));
   }
 
-  @Patch(':id')
+  @Post('route')
+  @ApiOperation({ summary: 'Get active reports near a route polyline' })
+  async findNearRoute(@Body() body: { route: Array<{ lat: number; lng: number }>; corridorMeters?: number; limit?: number }) {
+    return this.reportsService.findNearRoute(
+      body.route || [],
+      Number(body.corridorMeters),
+      Number(body.limit),
+    );
+  }
+
+  @Post(':id/confirm')
+  @ApiOperation({ summary: 'Confirm a road report is still present' })
+  async confirm(@Param('id') id: string, @Body() body: { userId?: string; sessionId?: string }) {
+    return this.reportsService.confirm(id, body);
+  }
+
+  @Post(':id/dismiss')
+  @ApiOperation({ summary: 'Dismiss a road report as not present' })
+  async dismissPost(@Param('id') id: string, @Body() body: { userId?: string; sessionId?: string }) {
+    return this.reportsService.dismiss(id, body);
+  }
+
+  @Patch(':id/verify')
   @ApiOperation({ summary: 'Verify a road report' })
   async verify(@Param('id') id: string) {
     return this.reportsService.verify(id);
@@ -51,7 +74,19 @@ export class RoadReportsController {
   @Patch(':id/dismiss')
   @ApiOperation({ summary: 'Mark a road report as not currently present' })
   async dismiss(@Param('id') id: string) {
-    return this.reportsService.dismiss(id);
+    return this.reportsService.dismiss(id, {});
+  }
+
+  @Patch(':id/reject')
+  @ApiOperation({ summary: 'Reject a road report' })
+  async reject(@Param('id') id: string, @Body() body: { reason?: string }) {
+    return this.reportsService.reject(id, body?.reason);
+  }
+
+  @Patch(':id/expire')
+  @ApiOperation({ summary: 'Expire a road report' })
+  async expire(@Param('id') id: string) {
+    return this.reportsService.expire(id);
   }
 
   @Delete(':id')

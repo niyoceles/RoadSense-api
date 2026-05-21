@@ -28,4 +28,5 @@ export declare class CreateReportDto {
     roadSegmentId?: string;
     cameraType?: 'fixed' | 'mobile' | 'red_light';
     reportedBy?: string;
+    source?: 'user' | 'admin' | 'system' | 'official_feed';
 }

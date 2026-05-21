@@ -9,6 +9,25 @@ services:
     ports:
       - "11434:11434"
     command: ["serve"]
+    environment:
+      - OLLAMA_TIMEOUT=60000
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  ollama-model-pull:
+    image: ollama/ollama:latest
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    command: ["pull", "${OLLAMA_MODEL:-mistral}"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+    restart: "no"
 
   roadsense-db:
     image: postgis/postgis:15-3.3-alpine
@@ -43,12 +62,25 @@ services:
       DB_USER: ${DB_USER:-postgres}
       DB_PASS: ${DB_PASS:-password}
       DB_NAME: ${DB_NAME:-roadsense}
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASS:-password}@roadsense-db:5432/${DB_NAME:-roadsense}
       JWT_SECRET: ${JWT_SECRET:-super_secret_key}
+      PUBLIC_API_BASE_URL: ${PUBLIC_API_BASE_URL:-http://197.243.23.105:3000}
+      MAP_DEFAULT_STYLE_URL: ${MAP_DEFAULT_STYLE_URL:-https://tiles.openfreemap.org/styles/bright}
+      MAP_SATELLITE_STYLE_URL: ${MAP_SATELLITE_STYLE_URL:-http://197.243.23.105:3000/styles/satellite.json}
+      MAP_HYBRID_STYLE_URL: ${MAP_HYBRID_STYLE_URL:-http://197.243.23.105:3000/styles/hybrid.json}
+      MAP_VECTOR_TILE_URL: ${MAP_VECTOR_TILE_URL:-http://197.243.23.105:3001/{z}/{x}/{y}.pbf}
+      MAP_OSM_RASTER_TILE_URL: ${MAP_OSM_RASTER_TILE_URL:-https://tile.openstreetmap.org/{z}/{x}/{y}.png}
+      MAP_SENTINEL_TILE_URL: ${MAP_SENTINEL_TILE_URL:-https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2024_3857/default/GoogleMapsCompatible/{z}/{y}/{x}.jpg}
+      MAP_GLYPHS_URL: ${MAP_GLYPHS_URL:-https://fonts.openmaptiles.org/{fontstack}/{range}.pbf}
       VALHALLA_URL: http://valhalla:8002
       NOMINATIM_URL: http://nominatim:8080
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-mistral}
     depends_on:
       roadsense-db:
         condition: service_healthy
+      ollama-model-pull:
+        condition: service_completed_successfully
 
   valhalla:
     image: ghcr.io/gis-ops/docker-valhalla/valhalla:latest
@@ -86,5 +118,6 @@ services:
     restart: on-failure
 
 volumes:
+  ollama_data:
   postgres_data:
   nominatim_data:

@@ -4,6 +4,8 @@ import {
   IsOptional,
   IsString,
   IsNotEmpty,
+  Max,
+  Min,
 } from 'class-validator';
 
 export enum ReportType {
@@ -40,10 +42,14 @@ export class CreateReportDto {
   description?: string;
 
   @IsNumber()
+  @Min(-90)
+  @Max(90)
   @IsNotEmpty()
   latitude: number;
 
   @IsNumber()
+  @Min(-180)
+  @Max(180)
   @IsNotEmpty()
   longitude: number;
 
@@ -70,4 +76,8 @@ export class CreateReportDto {
   @IsString()
   @IsOptional()
   reportedBy?: string;
+
+  @IsString()
+  @IsOptional()
+  source?: 'user' | 'admin' | 'system' | 'official_feed';
 }

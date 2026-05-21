@@ -16,22 +16,31 @@ exports.TrafficController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const traffic_engine_service_1 = require("./traffic-engine.service");
+const events_gateway_1 = require("../real-time-events/events.gateway");
 class TrafficUpdateDto {
 }
 let TrafficController = class TrafficController {
-    constructor(trafficEngine) {
+    constructor(trafficEngine, events) {
         this.trafficEngine = trafficEngine;
+        this.events = events;
     }
     async update(body) {
-        return this.trafficEngine.recordTrafficUpdate(body);
+        const segment = await this.trafficEngine.recordTrafficUpdate(body);
+        if (segment.accepted !== false) {
+            this.events.broadcastTrafficSegmentUpdate(segment);
+        }
+        return segment;
     }
     async nearby(lat, lng, radius = 5000) {
-        return this.trafficEngine.findNearby(lat, lng, radius);
+        return this.trafficEngine.findNearby(Number(lat), Number(lng), Number(radius));
+    }
+    async route(body) {
+        return this.trafficEngine.findNearRoute(body.route || [], Number(body.corridorMeters));
     }
 };
 exports.TrafficController = TrafficController;
 __decorate([
-    (0, common_1.Post)('update'),
+    (0, common_1.Post)(['update', 'samples']),
     (0, swagger_1.ApiOperation)({ summary: 'Record an anonymous traffic speed sample' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -51,9 +60,18 @@ __decorate([
     __metadata("design:paramtypes", [Number, Number, Object]),
     __metadata("design:returntype", Promise)
 ], TrafficController.prototype, "nearby", null);
+__decorate([
+    (0, common_1.Post)('route'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get traffic segments affecting a route polyline' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], TrafficController.prototype, "route", null);
 exports.TrafficController = TrafficController = __decorate([
     (0, swagger_1.ApiTags)('traffic'),
     (0, common_1.Controller)('traffic'),
-    __metadata("design:paramtypes", [traffic_engine_service_1.TrafficEngineService])
+    __metadata("design:paramtypes", [traffic_engine_service_1.TrafficEngineService,
+        events_gateway_1.RealTimeEventGateway])
 ], TrafficController);
 //# sourceMappingURL=traffic.controller.js.map
