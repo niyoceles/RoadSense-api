@@ -2,6 +2,8 @@
 
 .PHONY: setup up down logs clean help
 
+COMPOSE=docker compose -f docker-compose.yml -f ../appwrite/docker-compose.yml
+
 help:
 	@echo "RoadSense Management Commands:"
 	@echo "  make setup    - Run Appwrite installer (interactive)"
@@ -21,7 +23,7 @@ setup:
 
 up:
 	@echo "Starting RoadSense Infrastructure..."
-	@docker compose up -d
+	@$(COMPOSE) up -d
 
 fix:
 	@echo "Removing all conflicting containers..."
@@ -30,11 +32,11 @@ fix:
 	@docker rm -f appwrite-browser openruntimes-executor 2>/dev/null || true
 
 down:
-	@docker compose down --remove-orphans
+	@$(COMPOSE) down --remove-orphans
 
 logs:
-	@docker compose logs -f
+	@$(COMPOSE) logs -f
 
 clean:
-	@docker compose down -v
+	@$(COMPOSE) down -v
 	@rm -rf ../valhalla_data

@@ -1,8 +1,3 @@
-
-
-include:
-  - path: ../appwrite/docker-compose.yml
-
 services:
   ollama:
     image: ollama/ollama:latest
