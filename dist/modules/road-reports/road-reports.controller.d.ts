@@ -4,8 +4,8 @@ export declare class RoadReportsController {
     private readonly reportsService;
     constructor(reportsService: RoadReportsService);
     create(createReportDto: CreateReportDto): Promise<any>;
-    findAll(includeInactive?: string): Promise<any[]>;
-    findNearby(lat: number, lng: number, radius: number, limit?: number): Promise<any[]>;
+    findAll(includeInactive?: string): Promise<any>;
+    findNearby(lat: number, lng: number, radius: number, limit?: number): Promise<any>;
     findNearRoute(body: {
         route: Array<{
             lat: number;
@@ -13,7 +13,7 @@ export declare class RoadReportsController {
         }>;
         corridorMeters?: number;
         limit?: number;
-    }): Promise<any[]>;
+    }): Promise<any>;
     confirm(id: string, body: {
         userId?: string;
         sessionId?: string;

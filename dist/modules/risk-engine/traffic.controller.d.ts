@@ -45,13 +45,13 @@ export declare class TrafficController {
         accepted: boolean;
         rejectionReason: string;
     }>;
-    nearby(lat: number, lng: number, radius?: number): Promise<any[]>;
+    nearby(lat: number, lng: number, radius?: number): Promise<any>;
     route(body: {
         route: Array<{
             lat: number;
             lng: number;
         }>;
         corridorMeters?: number;
-    }): Promise<any[]>;
+    }): Promise<any>;
 }
 export {};

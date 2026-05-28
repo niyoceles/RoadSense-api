@@ -15,10 +15,10 @@ export declare class RoadReportsService {
     private readonly ready;
     constructor(gateway: RealTimeEventGateway, database: DatabaseService);
     create(createReportDto: CreateReportDto): Promise<any>;
-    findAll(includeInactive?: boolean): Promise<any[]>;
-    findNearby(lat: number, lng: number, radius?: number, limit?: number): Promise<any[]>;
-    findNearRoute(route: RoutePoint[], corridorMeters?: number, limit?: number): Promise<any[]>;
-    findNearbyByTypes(lat: number, lng: number, radius: number, types: ReportType[]): Promise<any[]>;
+    findAll(includeInactive?: boolean): Promise<any>;
+    findNearby(lat: number, lng: number, radius?: number, limit?: number): Promise<any>;
+    findNearRoute(route: RoutePoint[], corridorMeters?: number, limit?: number): Promise<any>;
+    findNearbyByTypes(lat: number, lng: number, radius: number, types: ReportType[]): Promise<any>;
     confirm(id: string, actor: {
         userId?: string;
         sessionId?: string;
