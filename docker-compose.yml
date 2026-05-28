@@ -2,7 +2,7 @@ services:
   ollama:
     image: ollama/ollama:latest
     ports:
-      - "11434:11434"
+      - "9091:11434"
     command: ["serve"]
     environment:
       - OLLAMA_TIMEOUT=60000
