@@ -20,6 +20,7 @@ export declare class MapStylesService {
     private glyphsUrl;
     private publicBaseUrl;
     private validUrl;
+    private numberConfig;
     private fillLayer;
     private lineLayer;
     private symbolLayer;

@@ -100,8 +100,10 @@ export class MapStylesService {
           source: 'sentinel2',
           paint: {
             'raster-opacity': 1,
-            'raster-contrast': 0.12,
-            'raster-saturation': 0.18,
+            'raster-contrast': 0.18,
+            'raster-saturation': 0.24,
+            'raster-brightness-min': 0.02,
+            'raster-brightness-max': 0.98,
           },
         },
       ],
@@ -125,15 +127,17 @@ export class MapStylesService {
           source: 'sentinel2',
           paint: {
             'raster-opacity': 1,
-            'raster-contrast': 0.1,
-            'raster-saturation': 0.12,
+            'raster-contrast': 0.16,
+            'raster-saturation': 0.2,
+            'raster-brightness-min': 0.02,
+            'raster-brightness-max': 0.98,
           },
         },
         {
           id: 'hybrid-osm-readable-overlay',
           type: 'raster',
           source: 'osmRaster',
-          paint: { 'raster-opacity': 0.48 },
+          paint: { 'raster-opacity': 0.22 },
           minzoom: 10,
         },
         this.lineLayer('hybrid-minor-roads', 'transportation', '#F6F7F2', 1.2, ['in', ['get', 'class'], ['literal', ['minor', 'service', 'track']]], 13),
@@ -192,7 +196,7 @@ export class MapStylesService {
       ],
       tileSize: 256,
       minzoom: 0,
-      maxzoom: 13,
+      maxzoom: this.numberConfig('MAP_SENTINEL_MAX_ZOOM', 14, 10, 19),
       attribution:
         'Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data)',
     };
@@ -223,6 +227,17 @@ export class MapStylesService {
       // Fall through to the known safe development default.
     }
     return fallback;
+  }
+
+  private numberConfig(
+    key: string,
+    fallback: number,
+    min: number,
+    max: number,
+  ) {
+    const value = Number(this.config.get<string>(key));
+    if (!Number.isFinite(value)) return fallback;
+    return Math.min(Math.max(value, min), max);
   }
 
   private fillLayer(
