@@ -1,0 +1,30 @@
+import { ConfigService } from '@nestjs/config';
+import { AssistantChatDto } from './dto/assistant-chat.dto';
+import { ConfirmAssistantActionDto } from './dto/assistant-response.dto';
+import { AssistantLlmProvider } from './providers/assistant-llm.provider';
+import { AssistantResponse } from './types/assistant.types';
+import { AssistantToolsService } from './tools/assistant-tools.service';
+export declare class AssistantService {
+    private readonly llm;
+    private readonly tools;
+    private readonly config;
+    private readonly logger;
+    constructor(llm: AssistantLlmProvider, tools: AssistantToolsService, config: ConfigService);
+    chat(request: AssistantChatDto): Promise<AssistantResponse>;
+    confirmAction(dto: ConfirmAssistantActionDto): Promise<AssistantResponse>;
+    private executeIntent;
+    private nearbyHazards;
+    private hazardDraft;
+    private routeExplanation;
+    private navigationDestination;
+    private safetySummary;
+    private classifyFallback;
+    private shouldUseFallback;
+    private extractDestination;
+    private isDistanceQuestion;
+    private distanceMeters;
+    private toReportType;
+    private humanHazard;
+    private clarify;
+    private quickActions;
+}

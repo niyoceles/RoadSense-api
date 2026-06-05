@@ -10,6 +10,7 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const alerts_module_1 = require("./modules/alerts/alerts.module");
+const assistant_module_1 = require("./assistant/assistant.module");
 const ai_module_1 = require("./modules/ai/ai.module");
 const cameras_module_1 = require("./modules/cameras/cameras.module");
 const real_time_events_module_1 = require("./modules/real-time-events/real-time-events.module");
@@ -28,6 +29,7 @@ exports.AppModule = AppModule = __decorate([
             database_module_1.DatabaseModule,
             road_reports_module_1.RoadReportsModule,
             alerts_module_1.AlertsModule,
+            assistant_module_1.AssistantModule,
             ai_module_1.AiModule,
             risk_engine_module_1.RiskEngineModule,
             routing_module_1.RoutingModule,
