@@ -74,8 +74,6 @@ services:
     depends_on:
       roadsense-db:
         condition: service_healthy
-      ollama-model-pull:
-        condition: service_completed_successfully
 
   valhalla:
     image: ghcr.io/gis-ops/docker-valhalla/valhalla:latest
