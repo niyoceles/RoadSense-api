@@ -9,6 +9,7 @@ export declare class TrafficEngineService {
     private readonly database;
     private readonly storagePath;
     private readonly ready;
+    private readonly logger;
     private segments;
     constructor(database: DatabaseService);
     calculateTrafficLevel(currentSpeed: number, speedLimit: number): TrafficLevel;

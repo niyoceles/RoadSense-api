@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var TrafficEngineService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TrafficEngineService = exports.TrafficLevel = void 0;
 const common_1 = require("@nestjs/common");
@@ -21,10 +22,11 @@ var TrafficLevel;
     TrafficLevel["CONGESTED"] = "congested";
     TrafficLevel["BLOCKED"] = "blocked";
 })(TrafficLevel || (exports.TrafficLevel = TrafficLevel = {}));
-let TrafficEngineService = class TrafficEngineService {
+let TrafficEngineService = TrafficEngineService_1 = class TrafficEngineService {
     constructor(database) {
         this.database = database;
         this.storagePath = (0, path_1.join)(process.cwd(), 'data', 'traffic.json');
+        this.logger = new common_1.Logger(TrafficEngineService_1.name);
         this.segments = new Map();
         this.ready = this.loadSegments();
     }
@@ -50,7 +52,12 @@ let TrafficEngineService = class TrafficEngineService {
             return { accepted: false, rejectionReason };
         }
         if (this.database.isEnabled) {
-            return this.recordTrafficUpdateInDatabase(update);
+            try {
+                return await this.recordTrafficUpdateInDatabase(update);
+            }
+            catch (error) {
+                this.logger.warn(`recordTrafficUpdateInDatabase failed, falling back to in-memory: ${error?.message}`);
+            }
         }
         const match = this.matchRoadSegment(update.lat, update.lng, update.heading);
         if (!match) {
@@ -86,7 +93,12 @@ let TrafficEngineService = class TrafficEngineService {
     async findNearby(lat, lng, radiusMeters = 5000) {
         await this.ready;
         if (this.database.isEnabled) {
-            return this.findNearbyInDatabase(lat, lng, radiusMeters);
+            try {
+                return await this.findNearbyInDatabase(lat, lng, radiusMeters);
+            }
+            catch (error) {
+                this.logger.warn(`findNearbyInDatabase failed, falling back to in-memory: ${error?.message}`);
+            }
         }
         const safeRadius = this.clamp(Number(radiusMeters) || 5000, 100, 25000);
         return [...this.segments.values()]
@@ -99,7 +111,12 @@ let TrafficEngineService = class TrafficEngineService {
     async findNearRoute(route, corridorMeters = 120) {
         await this.ready;
         if (this.database.isEnabled) {
-            return this.findNearRouteInDatabase(route, corridorMeters);
+            try {
+                return await this.findNearRouteInDatabase(route, corridorMeters);
+            }
+            catch (error) {
+                this.logger.warn(`findNearRouteInDatabase failed, falling back to in-memory: ${error?.message}`);
+            }
         }
         const points = route
             .map((point) => ({ lat: Number(point.lat), lng: Number(point.lng) }))
@@ -392,7 +409,7 @@ let TrafficEngineService = class TrafficEngineService {
     }
 };
 exports.TrafficEngineService = TrafficEngineService;
-exports.TrafficEngineService = TrafficEngineService = __decorate([
+exports.TrafficEngineService = TrafficEngineService = TrafficEngineService_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [database_service_1.DatabaseService])
 ], TrafficEngineService);

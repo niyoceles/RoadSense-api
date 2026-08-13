@@ -12,6 +12,8 @@ var DatabaseService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DatabaseService = void 0;
 const common_1 = require("@nestjs/common");
+const fs_1 = require("fs");
+const path_1 = require("path");
 const config_1 = require("@nestjs/config");
 const pg_1 = require("pg");
 let DatabaseService = DatabaseService_1 = class DatabaseService {
@@ -29,6 +31,19 @@ let DatabaseService = DatabaseService_1 = class DatabaseService {
                 ? { rejectUnauthorized: false }
                 : undefined,
         });
+    }
+    async onModuleInit() {
+        if (!this.pool)
+            return;
+        try {
+            const migrationPath = (0, path_1.join)(process.cwd(), 'db', 'migrations', '001_realtime_road_intelligence.sql');
+            const sql = await fs_1.promises.readFile(migrationPath, 'utf8');
+            await this.pool.query(sql);
+            this.logger.log('Database migrations applied successfully.');
+        }
+        catch (error) {
+            this.logger.warn(`Migration skipped or partially applied: ${error?.message}`);
+        }
     }
     get isEnabled() {
         return Boolean(this.pool);

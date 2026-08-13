@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { DatabaseService } from '../database/database.service';
@@ -14,6 +14,7 @@ export enum TrafficLevel {
 export class TrafficEngineService {
   private readonly storagePath = join(process.cwd(), 'data', 'traffic.json');
   private readonly ready: Promise<void>;
+  private readonly logger = new Logger(TrafficEngineService.name);
   private segments = new Map<string, any>();
 
   constructor(private readonly database: DatabaseService) {
@@ -59,7 +60,11 @@ export class TrafficEngineService {
     }
 
     if (this.database.isEnabled) {
-      return this.recordTrafficUpdateInDatabase(update);
+      try {
+        return await this.recordTrafficUpdateInDatabase(update);
+      } catch (error: any) {
+        this.logger.warn(`recordTrafficUpdateInDatabase failed, falling back to in-memory: ${error?.message}`);
+      }
     }
 
     const match = this.matchRoadSegment(update.lat, update.lng, update.heading);
@@ -103,7 +108,11 @@ export class TrafficEngineService {
   async findNearby(lat: number, lng: number, radiusMeters = 5000) {
     await this.ready;
     if (this.database.isEnabled) {
-      return this.findNearbyInDatabase(lat, lng, radiusMeters);
+      try {
+        return await this.findNearbyInDatabase(lat, lng, radiusMeters);
+      } catch (error: any) {
+        this.logger.warn(`findNearbyInDatabase failed, falling back to in-memory: ${error?.message}`);
+      }
     }
 
     const safeRadius = this.clamp(Number(radiusMeters) || 5000, 100, 25000);
@@ -129,7 +138,11 @@ export class TrafficEngineService {
   ) {
     await this.ready;
     if (this.database.isEnabled) {
-      return this.findNearRouteInDatabase(route, corridorMeters);
+      try {
+        return await this.findNearRouteInDatabase(route, corridorMeters);
+      } catch (error: any) {
+        this.logger.warn(`findNearRouteInDatabase failed, falling back to in-memory: ${error?.message}`);
+      }
     }
 
     const points = route

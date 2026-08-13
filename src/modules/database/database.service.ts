@@ -1,9 +1,11 @@
-import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { promises as fs } from 'fs';
+import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
 import { Pool, QueryResult } from 'pg';
 
 @Injectable()
-export class DatabaseService implements OnModuleDestroy {
+export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(DatabaseService.name);
   private readonly pool?: Pool;
 
@@ -22,6 +24,18 @@ export class DatabaseService implements OnModuleDestroy {
         ? { rejectUnauthorized: false }
         : undefined,
     });
+  }
+
+  async onModuleInit() {
+    if (!this.pool) return;
+    try {
+      const migrationPath = join(process.cwd(), 'db', 'migrations', '001_realtime_road_intelligence.sql');
+      const sql = await fs.readFile(migrationPath, 'utf8');
+      await this.pool.query(sql);
+      this.logger.log('Database migrations applied successfully.');
+    } catch (error: any) {
+      this.logger.warn(`Migration skipped or partially applied: ${error?.message}`);
+    }
   }
 
   get isEnabled() {
