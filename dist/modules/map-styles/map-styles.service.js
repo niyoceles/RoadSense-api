@@ -93,10 +93,6 @@ let MapStylesService = class MapStylesService {
                     source: 'sentinel2',
                     paint: {
                         'raster-opacity': 1,
-                        'raster-contrast': 0.18,
-                        'raster-saturation': 0.24,
-                        'raster-brightness-min': 0.02,
-                        'raster-brightness-max': 0.98,
                     },
                 },
             ],
@@ -109,7 +105,6 @@ let MapStylesService = class MapStylesService {
             glyphs: this.glyphsUrl(),
             sources: {
                 sentinel2: this.sentinelRasterSource(),
-                osmRaster: this.osmRasterSource(),
                 openmaptiles: this.osmVectorSource(),
             },
             layers: [
@@ -119,24 +114,13 @@ let MapStylesService = class MapStylesService {
                     source: 'sentinel2',
                     paint: {
                         'raster-opacity': 1,
-                        'raster-contrast': 0.16,
-                        'raster-saturation': 0.2,
-                        'raster-brightness-min': 0.02,
-                        'raster-brightness-max': 0.98,
                     },
                 },
-                {
-                    id: 'hybrid-osm-readable-overlay',
-                    type: 'raster',
-                    source: 'osmRaster',
-                    paint: { 'raster-opacity': 0.22 },
-                    minzoom: 10,
-                },
-                this.lineLayer('hybrid-minor-roads', 'transportation', '#F6F7F2', 1.2, ['in', ['get', 'class'], ['literal', ['minor', 'service', 'track']]], 13),
-                this.lineLayer('hybrid-major-roads-casing', 'transportation', '#233142', 6.4, ['in', ['get', 'class'], ['literal', ['primary', 'secondary', 'tertiary', 'trunk', 'motorway']]], 6),
-                this.lineLayer('hybrid-major-roads', 'transportation', '#FFF7D1', 3.9, ['in', ['get', 'class'], ['literal', ['primary', 'secondary', 'tertiary', 'trunk', 'motorway']]], 6),
-                this.symbolLayer('hybrid-road-labels', 'transportation_name', ['get', 'name'], '#FFFFFF', 12, 12, '#18202A'),
-                this.symbolLayer('hybrid-place-labels', 'place', ['coalesce', ['get', 'name'], ['get', 'name:en']], '#FFFFFF', 14, 5, '#18202A'),
+                this.lineLayer('hybrid-minor-roads', 'transportation', '#FFFFFF', 1.5, ['in', ['get', 'class'], ['literal', ['minor', 'service', 'track']]], 13),
+                this.lineLayer('hybrid-major-roads-casing', 'transportation', '#000000', 6.4, ['in', ['get', 'class'], ['literal', ['primary', 'secondary', 'tertiary', 'trunk', 'motorway']]], 6),
+                this.lineLayer('hybrid-major-roads', 'transportation', '#FFD700', 3.9, ['in', ['get', 'class'], ['literal', ['primary', 'secondary', 'tertiary', 'trunk', 'motorway']]], 6),
+                this.symbolLayer('hybrid-road-labels', 'transportation_name', ['get', 'name'], '#FFFFFF', 13, 12, '#000000'),
+                this.symbolLayer('hybrid-place-labels', 'place', ['coalesce', ['get', 'name'], ['get', 'name:en']], '#FFFFFF', 15, 5, '#000000'),
             ],
         };
     }
@@ -167,12 +151,12 @@ let MapStylesService = class MapStylesService {
         return {
             type: 'raster',
             tiles: [
-                this.validUrl(this.config.get('MAP_SENTINEL_TILE_URL'), 'https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2024_3857/default/GoogleMapsCompatible/{z}/{y}/{x}.jpg'),
+                this.validUrl(this.config.get('MAP_SENTINEL_TILE_URL'), 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'),
             ],
             tileSize: 256,
             minzoom: 0,
-            maxzoom: this.numberConfig('MAP_SENTINEL_MAX_ZOOM', 14, 10, 19),
-            attribution: 'Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data)',
+            maxzoom: this.numberConfig('MAP_SENTINEL_MAX_ZOOM', 19, 10, 19),
+            attribution: 'Esri, Maxar, Earthstar Geographics, and the GIS User Community',
         };
     }
     glyphsUrl() {
